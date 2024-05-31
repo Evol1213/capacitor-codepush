@@ -17,7 +17,7 @@ export class FileUtil {
             try {
                 const statResult = yield Filesystem.stat({ directory, path });
                 // directory for Android, NSFileTypeDirectory for iOS
-                return statResult.type === "directory" || statResult.type === "NSFileTypeDirectory";
+                return statResult.type === "directory";
             }
             catch (error) {
                 return false;
@@ -32,7 +32,7 @@ export class FileUtil {
             try {
                 const statResult = yield Filesystem.stat({ directory, path });
                 // file for Android, NSFileTypeRegular for iOS
-                return statResult.type === "file" || statResult.type === "NSFileTypeRegular";
+                return statResult.type === "file";
             }
             catch (error) {
                 return false;
@@ -80,10 +80,10 @@ export class FileUtil {
                 const { files } = yield Filesystem.readdir(sourceDir);
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
-                    if (ignoreList.includes(file))
+                    if (ignoreList.includes(file.name))
                         continue;
-                    const sourcePath = sourceDir.path + "/" + file;
-                    const destPath = destinationDir.path + "/" + file;
+                    const sourcePath = sourceDir.path + "/" + file.name;
+                    const destPath = destinationDir.path + "/" + file.name;
                     const source = Object.assign(Object.assign({}, sourceDir), { path: sourcePath });
                     const destination = Object.assign(Object.assign({}, destinationDir), { path: destPath });
                     if (yield FileUtil.directoryExists(source.directory, source.path)) { // is directory
@@ -149,7 +149,27 @@ export class FileUtil {
     static readFile(directory, path) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield Filesystem.readFile({ directory, path, encoding: Encoding.UTF8 });
-            return result.data;
+            if (typeof result.data === 'string') {
+                return result.data;
+            }
+            else if (result.data instanceof Blob) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        if (typeof reader.result === 'string') {
+                            resolve(reader.result);
+                        }
+                        else {
+                            reject(new Error('Could not read file'));
+                        }
+                    };
+                    reader.onerror = (error) => reject(error);
+                    reader.readAsText(result.data);
+                });
+            }
+            else {
+                throw new Error('Unexpected data type');
+            }
         });
     }
     static readDataFile(path) {
