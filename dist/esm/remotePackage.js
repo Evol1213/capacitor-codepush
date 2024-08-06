@@ -51,8 +51,14 @@ export class RemotePackage extends Package {
                 if (yield FileUtil.fileExists(Directory.Data, file)) {
                     yield Filesystem.deleteFile({ directory: Directory.Data, path: file });
                 }
+                const headers = {
+                    "X-CodePush-Plugin-Name": "cordova-plugin-code-push",
+                    "X-CodePush-Plugin-Version": "1.11.13",
+                    "X-CodePush-SDK-Version": "3.1.5"
+                };
                 yield Http.downloadFile({
                     url: this.downloadUrl,
+                    headers,
                     method: "GET",
                     filePath: file,
                     params: {},

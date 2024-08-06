@@ -51,9 +51,15 @@ export class RemotePackage extends Package implements IRemotePackage {
       if (await FileUtil.fileExists(Directory.Data, file)) {
         await Filesystem.deleteFile({ directory: Directory.Data, path: file });
       }
+      const headers: { [key: string]: string } = {
+        "X-CodePush-Plugin-Name": "cordova-plugin-code-push",
+        "X-CodePush-Plugin-Version": "1.11.13",
+        "X-CodePush-SDK-Version": "3.1.5"
+      };
 
       await Http.downloadFile({
         url: this.downloadUrl,
+        headers,
         method: "GET",
         filePath: file,
         params:{},
