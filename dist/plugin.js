@@ -1136,6 +1136,7 @@ var capacitorPlugin = (function (exports, acquisitionSdk, filesystem, core, http
                         url: this.downloadUrl,
                         method: "GET",
                         filePath: file,
+                        params: {},
                         fileDirectory: filesystem.Directory.Data,
                         responseType: "blob"
                     });
