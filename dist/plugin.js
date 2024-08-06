@@ -457,7 +457,7 @@ var capacitorPlugin = (function (exports, acquisitionSdk, filesystem, core, http
                 headers
             };
             if (methodName === "GET") {
-                options.params = requestBody;
+                options.params = requestBody || {};
             }
             else {
                 options.data = requestBody;

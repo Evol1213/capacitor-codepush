@@ -55,7 +55,7 @@ export class HttpRequester implements Http.Requester {
             headers
         };
         if (methodName === "GET") {
-            options.params = requestBody;
+            options.params = requestBody || {};
         } else {
             options.data = requestBody;
         }

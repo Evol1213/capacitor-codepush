@@ -43,7 +43,7 @@ export class HttpRequester {
             headers
         };
         if (methodName === "GET") {
-            options.params = requestBody;
+            options.params = requestBody || {};
         }
         else {
             options.data = requestBody;
